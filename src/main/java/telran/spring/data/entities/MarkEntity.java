@@ -11,11 +11,11 @@ public class MarkEntity {
 	long id;
 	
 	@ManyToOne
-	@JoinColumn(name = "student_id")
+	@JoinColumn(name = "stid")
 	StudentEntity student;
 	
 	@ManyToOne
-	@JoinColumn(name = "subject_id")
+	@JoinColumn(name = "suid")
 	SubjectEntity subject;
 	
 	int mark;

@@ -80,7 +80,7 @@ public class RandomDbCreation {
 		do {
 			studentId = getRandomNumber(1, names.length);
 		} while(!subjectStudents.computeIfAbsent(subjectId, k -> new HashSet<Long>()).add(studentId));		
-		collegeService.addMark(new Mark(studentId,	subjectId, getRandomNumber(1, 100)));
+		collegeService.addMark(new Mark(studentId,	subjectId, getRandomNumber(60, 100)));
 	}
 
 	private int getRandomNumber(int min, int max) {

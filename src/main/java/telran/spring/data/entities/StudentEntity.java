@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 public class StudentEntity {
 
 	@Id
+	@Column(name="stid")
 	long id;
 	
 	@Column(unique = true)
