@@ -29,4 +29,24 @@ public class CollegeController {
 		return collegeService.getMarksByName(name);
 	}
 	
+	@GetMapping("marks/avg")
+	List<StudentAvgMark> studentsAvgMark() {
+		return collegeService.getStudentsAvgMark();
+	}
+	
+	@GetMapping("marks/best")
+	List<StudentName> bestStudents(@RequestParam(name = "quantity") int quantity,
+			@RequestParam(name = "subject") String subject) {
+		return collegeService.getTopBestStudentsSubject(quantity, subject);
+	}
+	
+	@GetMapping("marks/worst")
+	List<StudentSubjectMark> worstStudents(@RequestParam(name = "quantity") int quantity) {
+		return collegeService.getMarksOfWorstStudents(quantity);
+	}
+	
+	@GetMapping("marks/distribution")
+	List<IntervalMarksCount> marksDistribution(@RequestParam(name = "interval", defaultValue = "1") int interval) {
+		return collegeService.marksDistribution(interval);
+	}
 }

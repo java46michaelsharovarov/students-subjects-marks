@@ -12,5 +12,11 @@ public interface CollegeService {
 	void addMark(Mark mark);
 	List<MarkProj> getMarksByNameAndSubject(String name, String subject);
 	List<StudentSubjectMark> getMarksByName(String name);
+	List<StudentAvgMark> getStudentsAvgMark();
+	List<StudentName> getBestStudent();
+	List<StudentName> getTopBestStudents(int nStudents);
+	List<StudentName> getTopBestStudentsSubject(int nStudents, String subject);
+	List<StudentSubjectMark> getMarksOfWorstStudents(int nStudents);
+	List<IntervalMarksCount> marksDistribution(int interval);
 	
 }

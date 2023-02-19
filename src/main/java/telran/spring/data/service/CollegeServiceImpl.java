@@ -10,7 +10,10 @@ import telran.spring.data.entities.*;
 import telran.spring.data.model.Mark;
 import telran.spring.data.model.Student;
 import telran.spring.data.model.Subject;
+import telran.spring.data.proj.IntervalMarksCount;
 import telran.spring.data.proj.MarkProj;
+import telran.spring.data.proj.StudentAvgMark;
+import telran.spring.data.proj.StudentName;
 import telran.spring.data.proj.StudentSubjectMark;
 import telran.spring.data.repo.*;
 
@@ -71,6 +74,38 @@ public class CollegeServiceImpl implements CollegeService {
 	@Override
 	public List<StudentSubjectMark> getMarksByName(String name) {
 		return markRepository.findByStudentName(name);
+	}
+
+	@Override
+	public List<StudentAvgMark> getStudentsAvgMark() {
+		return markRepository.studentsAvgMark();
+	}
+
+	@Override
+	public List<StudentName> getBestStudent() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<StudentName> getTopBestStudents(int nStudents) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<StudentName> getTopBestStudentsSubject(int nStudents, String subject) {
+		return markRepository.bestStudents(nStudents, subject);
+	}
+
+	@Override
+	public List<StudentSubjectMark> getMarksOfWorstStudents(int nStudents) {
+		return markRepository.marksOfWorstStudents(nStudents);
+	}
+
+	@Override
+	public List<IntervalMarksCount> marksDistribution(int interval) {
+		return markRepository.marksDistribution(interval);
 	}
 
 }
