@@ -83,19 +83,17 @@ public class CollegeServiceImpl implements CollegeService {
 
 	@Override
 	public List<StudentName> getBestStudent() {
-		// TODO Auto-generated method stub
-		return null;
+		return markRepository.bestStudents();
 	}
 
 	@Override
 	public List<StudentName> getTopBestStudents(int nStudents) {
-		// TODO Auto-generated method stub
-		return null;
+		return markRepository.topBestStudents(nStudents);
 	}
 
 	@Override
 	public List<StudentName> getTopBestStudentsSubject(int nStudents, String subject) {
-		return markRepository.bestStudents(nStudents, subject);
+		return markRepository.topBestStudentsSubject(nStudents, subject);
 	}
 
 	@Override

@@ -26,13 +26,26 @@ public interface MarkRepository extends JpaRepository<MarkEntity, Long>{
 			+ "group by students.stid", nativeQuery = true)
 	List<StudentAvgMark> studentsAvgMark();
 	
+	@Query(value = "select name from (select name, cast(avg(mark) as DECIMAL(7,2)) as avg "
+			+ FROM_JOIN
+			+ "group by students.stid) as a "
+			+ "where avg > (select avg(mark) from marks)", nativeQuery = true)
+	List<StudentName> bestStudents();
+	
+	@Query(value = "select distinct name "
+			+ FROM_JOIN
+			+ "where marks.stid in (select stid from marks "
+			+ "group by stid order by avg(mark) desc limit :quantity) "
+			+ "order by 1", nativeQuery = true)
+	List<StudentName> topBestStudents(int quantity);
+	
 	@Query(value = "select name "
 			+ FROM_JOIN
 			+ "where marks.suid in (select suid from subjects "
 			+ "where subject like :subject) "
 			+ "order by mark desc "
 			+ "limit :quantity", nativeQuery = true)
-	List<StudentName> bestStudents(int quantity, String subject);
+	List<StudentName> topBestStudentsSubject(int quantity, String subject);
 	
 	@Query(value = "select name, subject, mark "
 			+ FROM_JOIN

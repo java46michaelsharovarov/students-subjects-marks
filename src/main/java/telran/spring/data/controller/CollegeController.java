@@ -35,9 +35,16 @@ public class CollegeController {
 	}
 	
 	@GetMapping("marks/best")
-	List<StudentName> bestStudents(@RequestParam(name = "quantity") int quantity,
-			@RequestParam(name = "subject") String subject) {
-		return collegeService.getTopBestStudentsSubject(quantity, subject);
+	List<StudentName> best3Students(@RequestParam(name = "quantity", defaultValue = "0") int quantity,
+			@RequestParam(name = "subject", defaultValue = "all") String subject) {
+		if(quantity == 0 && subject.equals("all")) {
+			return collegeService.getBestStudent();
+		}
+		if(quantity != 0 && subject.equals("all")) {
+			return collegeService.getTopBestStudents(quantity);
+		} else {
+			return collegeService.getTopBestStudentsSubject(quantity, subject);
+		}		
 	}
 	
 	@GetMapping("marks/worst")
