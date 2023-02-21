@@ -1,11 +1,15 @@
 package telran.spring.data.service;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import telran.spring.data.entities.*;
 import telran.spring.data.model.Mark;
 import telran.spring.data.model.Student;
@@ -24,12 +28,14 @@ public class CollegeServiceImpl implements CollegeService {
 	StudentRepository studentRepository;
 	SubjectRepository subjectRepository;
 	MarkRepository markRepository;
+	EntityManager em;
 	
 	public CollegeServiceImpl(StudentRepository studentRepository, SubjectRepository subjectRepository,
-			MarkRepository markRepository) {
+			MarkRepository markRepository, EntityManager em) {
 		this.studentRepository = studentRepository;
 		this.subjectRepository = subjectRepository;
 		this.markRepository = markRepository;
+		this.em = em;
 	}
 
 	@Override
@@ -104,6 +110,56 @@ public class CollegeServiceImpl implements CollegeService {
 	@Override
 	public List<IntervalMarksCount> marksDistribution(int interval) {
 		return markRepository.marksDistribution(interval);
+	}
+
+	@Override
+	public List<String> getSqlQuery(String sqlQuery) {
+		var query = em.createNativeQuery(sqlQuery);
+		return getResult(query);
+	}
+
+	@Override
+	public List<String> getJpqlQuery(String jpqlQuery) {
+		var query = em.createQuery(jpqlQuery);
+		return getResult(query);
+	}
+
+	@SuppressWarnings("unchecked")
+	private List<String> getResult(Query query) {
+		var list = query.getResultList();
+		List<String> res = Collections.emptyList();
+		if(!list.isEmpty()) {
+			res = list.get(0).getClass().isArray() 
+					? multiProjectionResult(list)
+							: singleProjectionResult(list);			
+		}
+		return res;
+	}
+
+	private List<String> multiProjectionResult(List<Object[]> list) {
+		return list.stream().map(Arrays::deepToString).toList();
+	}
+
+	private List<String> singleProjectionResult(List<Object> list) {
+		return list.stream().map(Object::toString).toList();
+	}
+
+	@Override
+	@Transactional
+	public List<String> removeStudents(double markCountLess) {
+		List<StudentEntity> studentsToRemove = studentRepository.worstStudents(markCountLess);
+		studentsToRemove.forEach(studentRepository::delete);
+		List<String> removedStudentNames = studentsToRemove.stream().map(StudentEntity::getName).toList();
+		return removedStudentNames;
+	}
+
+	@Override
+	@Transactional
+	public List<String> removeLeastPopularSubject(int marksThreshold) {
+		List<SubjectEntity> subjectsToRemove = subjectRepository.leastPopularSubject(marksThreshold);
+		subjectsToRemove.forEach(subjectRepository::delete);
+		List<String> removedSubjects = subjectsToRemove.stream().map(SubjectEntity::getSubject).toList();
+		return removedSubjects;
 	}
 
 }

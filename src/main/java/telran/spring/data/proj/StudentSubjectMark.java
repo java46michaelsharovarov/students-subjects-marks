@@ -1,9 +1,7 @@
 package telran.spring.data.proj;
 
-public interface StudentSubjectMark {
+public interface StudentSubjectMark extends StudentName, MarkProj{
 
-	String getName();
 	String getSubject();
-	Integer getMark();
 	
 }

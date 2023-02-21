@@ -1,5 +1,7 @@
 package telran.spring.data.entities;
 
+import java.util.List;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -12,6 +14,9 @@ public class SubjectEntity {
 	
 	@Column(unique = true)
 	String subject;
+	
+	@OneToMany(mappedBy = "subject", cascade = CascadeType.REMOVE)
+	List<MarkEntity> marks;
 	
 	public SubjectEntity() {
 	}

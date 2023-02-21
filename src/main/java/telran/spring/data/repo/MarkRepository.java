@@ -10,56 +10,63 @@ import telran.spring.data.proj.*;
 
 public interface MarkRepository extends JpaRepository<MarkEntity, Long>{	
 
-	String FROM_JOIN = "from marks "
-			+ "join students on students.stid = marks.stid "
-			+ "join subjects on subjects.suid = marks.suid ";
+	static final String FROM_STUDENTS_MARKS = "from students st join marks ms on st.stid = ms.stid ";
+	static final String FROM_STUDENTS_SUBJECTS_MARKS = FROM_STUDENTS_MARKS + "join subjects sb on sb.suid = ms.suid ";
+	static final String MIN_INTERVAL = " floor(mark/:interval) * :interval ";
 
 	List<MarkProj> findByStudentNameAndSubjectSubject(String name, String subject);
 	
 	@Query(value = "select name, subject, mark "
-			+ FROM_JOIN
+			+ FROM_STUDENTS_SUBJECTS_MARKS
 			+ "where name = :name ", nativeQuery = true)
 	List<StudentSubjectMark> findByStudentName(String name);
 	
-	@Query(value = "select name, cast(avg(mark) as DECIMAL(7,2)) "
-			+ FROM_JOIN
-			+ "group by students.stid", nativeQuery = true)
+	@Query(value="select name, round(avg(mark)) as avg " 
+			+ FROM_STUDENTS_MARKS 
+			+ "group by name", nativeQuery = true)
 	List<StudentAvgMark> studentsAvgMark();
 	
-	@Query(value = "select name from (select name, cast(avg(mark) as DECIMAL(7,2)) as avg "
-			+ FROM_JOIN
-			+ "group by students.stid) as a "
-			+ "where avg > (select avg(mark) from marks)", nativeQuery = true)
+//	@Query(value="select name " 
+//			+ FROM_STUDENTS_MARKS 
+//			+ "group by name having avg(mark) >"
+//			+ " (select avg(mark) from marks)",	nativeQuery = true)
+	@Query("select student.name as name from MarkEntity group by student.name "
+			+ "having avg(mark) > (select avg(mark) from MarkEntity)")
 	List<StudentName> bestStudents();
 	
-	@Query(value = "select distinct name "
-			+ FROM_JOIN
-			+ "where marks.stid in (select stid from marks "
-			+ "group by stid order by avg(mark) desc limit :quantity) "
-			+ "order by 1", nativeQuery = true)
+	@Query(value="select name " 
+			+ FROM_STUDENTS_MARKS 
+			+ "group by name order by avg(mark) desc "
+			+ "limit :quantity", nativeQuery = true)
 	List<StudentName> topBestStudents(int quantity);
 	
-	@Query(value = "select name "
-			+ FROM_JOIN
-			+ "where marks.suid in (select suid from subjects "
-			+ "where subject like :subject) "
-			+ "order by mark desc "
+	@Query(value="select name " 
+			+ FROM_STUDENTS_SUBJECTS_MARKS 
+			+ "where subject = :subject "
+			+ "group by name "
+			+ "order by avg(mark) desc "
 			+ "limit :quantity", nativeQuery = true)
 	List<StudentName> topBestStudentsSubject(int quantity, String subject);
 	
 	@Query(value = "select name, subject, mark "
-			+ FROM_JOIN
-			+ "where marks.stid in (select stid from marks "
+			+ FROM_STUDENTS_SUBJECTS_MARKS
+			+ "where ms.stid in (select stid from marks "
 			+ "group by stid order by avg(mark) limit :quantity) "
 			+ "order by 1", nativeQuery = true)
 	List<StudentSubjectMark> marksOfWorstStudents(int quantity);
 	
-	@Query(value = "select floor(mark/10) * 10 as min, "
-			+ "floor(mark/10) * 10 + 9 as max, "
+//	@Query("select " + MIN_INTERVAL + "as min, "
+//			+ MIN_INTERVAL + "+ :interval - 1 as max, "
+//			+ "count(mark) as occurrences "
+//			+ "from marks "
+//			+ "group by min, max "
+//			+ "order by 1")
+	@Query("select " + MIN_INTERVAL + "as min, "
+			+ MIN_INTERVAL + "+ :interval - 1 as max, "
 			+ "count(mark) as occurrences "
-			+ "from marks "
-			+ "group by 1 "
-			+ "order by 1", nativeQuery = true)
+			+ "from MarkEntity "
+			+ "group by min, max "
+			+ "order by 1")
 	List<IntervalMarksCount> marksDistribution(int interval);
 	
 }

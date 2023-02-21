@@ -18,5 +18,9 @@ public interface CollegeService {
 	List<StudentName> getTopBestStudentsSubject(int nStudents, String subject);
 	List<StudentSubjectMark> getMarksOfWorstStudents(int nStudents);
 	List<IntervalMarksCount> marksDistribution(int interval);
+	List<String> getSqlQuery(String sqlQuery);
+	List<String> getJpqlQuery(String jpqlQuery);
+	List<String> removeStudents(double markCountLess); //removing all students having avg(mark) * count(mark) less then given value
+	List<String> removeLeastPopularSubject(int marksThreshold);
 	
 }

@@ -1,8 +1,7 @@
 package telran.spring.data.proj;
 
-public interface StudentAvgMark {
+public interface StudentAvgMark extends StudentName {
 
-	String getName();
 	Double getAvg();
 	
 }

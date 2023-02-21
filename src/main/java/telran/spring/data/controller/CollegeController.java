@@ -3,11 +3,16 @@ package telran.spring.data.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import telran.spring.data.model.QueryData;
+import telran.spring.data.model.QueryType;
 import telran.spring.data.proj.*;
 import telran.spring.data.service.CollegeService;
 
@@ -53,7 +58,24 @@ public class CollegeController {
 	}
 	
 	@GetMapping("marks/distribution")
-	List<IntervalMarksCount> marksDistribution(@RequestParam(name = "interval", defaultValue = "1") int interval) {
+	List<IntervalMarksCount> marksDistribution(@RequestParam(name = "interval", defaultValue = "10") int interval) {
 		return collegeService.marksDistribution(interval);
+	}
+	
+	@PostMapping("query")
+	List<String> getOuery(@RequestBody QueryData queryData) {
+		return queryData.type == QueryType.JPQL 
+				? collegeService.getJpqlQuery(queryData.query) 
+						: collegeService.getSqlQuery(queryData.query);
+	}
+	
+	@DeleteMapping("students")
+	List<String> removeStudents(@RequestParam("score") int marcCountLess) {
+		return collegeService.removeStudents(marcCountLess);
+	}
+	
+	@DeleteMapping("subjects")
+	List<String> removeLeastPopularSubject(@RequestParam("limit") int marcsThreshold) {
+		return collegeService.removeLeastPopularSubject(marcsThreshold);
 	}
 }
