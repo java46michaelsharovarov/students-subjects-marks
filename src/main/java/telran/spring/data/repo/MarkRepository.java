@@ -68,5 +68,7 @@ public interface MarkRepository extends JpaRepository<MarkEntity, Long>{
 			+ "group by min, max "
 			+ "order by 1")
 	List<IntervalMarksCount> marksDistribution(int interval);
+
+	List<MarkEntity> findByStudentId(long id);
 	
 }

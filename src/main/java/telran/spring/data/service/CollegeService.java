@@ -22,5 +22,6 @@ public interface CollegeService {
 	List<String> getJpqlQuery(String jpqlQuery);
 	List<String> removeStudents(double markCountLess); //removing all students having avg(mark) * count(mark) less then given value
 	List<String> removeLeastPopularSubject(int marksThreshold);
+	void increaseMarksStudent(long id, int delta);
 	
 }

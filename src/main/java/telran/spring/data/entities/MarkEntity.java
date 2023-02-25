@@ -44,5 +44,9 @@ public class MarkEntity {
 	public int getMark() {
 		return mark;
 	}
+
+	public void setMark(int mark) {
+		this.mark = mark;
+	}
 	
 }

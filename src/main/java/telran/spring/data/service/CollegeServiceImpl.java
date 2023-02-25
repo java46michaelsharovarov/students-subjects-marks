@@ -162,4 +162,11 @@ public class CollegeServiceImpl implements CollegeService {
 		return removedSubjects;
 	}
 
+	@Override
+	@Transactional
+	public void increaseMarksStudent(long id, int delta) {
+		List<MarkEntity> marksToUpdate = markRepository.findByStudentId(id);
+		marksToUpdate.forEach(me -> me.setMark(me.getMark() + delta));
+	}
+
 }
